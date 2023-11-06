@@ -5,7 +5,7 @@ require __DIR__ . '/vendor/autoload.php';
 $faker = Faker\Factory::create('en_PH');
 
 
-function customFakeSentence($faker, $wordCount = 6, $separator = ' ')
+function FakeSentence($faker, $wordCount = 6, $separator = ' ')
 {
     $words = $faker->words($wordCount);
     return ucfirst(implode($separator, $words)) . '.';
