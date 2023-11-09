@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
+<style> 
+    .table {
+        -webkit-text-fill-color: black;
+    }
+    
+    </style>
 	<meta charset="utf-8" />
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -72,7 +78,7 @@
     ?>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-5.jpg">
+    <div class="sidebar" data-color="red" data-image="assets/img/sidebar-5.jpg">
 
     <!--
 
@@ -97,12 +103,12 @@
                                 <div class="col-md-12">
                                     <form action="/transaction.php" method="GET">
                                         <input type="text" name="search" />
-                                        <input type="submit" value="Search" class="btn btn-info btn-fill" />
+                                        <input type="submit" value="Search" class="btn btn-danger btn-fill" />
                                     </form>
                                 </div>
                                 <div class="col-md-12">
                                     <a href="/transaction-add.php">
-                                        <button type="submit" class="btn btn-info btn-fill pull-right">Add New Transaction</button>
+                                        <button type="submit" class="btn btn-danger btn-fill pull-right">Add New Transaction</button>
                                     </a>
                                 </div>
                                 <div class="card-header ">
