@@ -112,7 +112,7 @@
                                     </a>
                                 </div>
                                 <div class="card-header ">
-                                    <h4 class="card-title">Transactions</h4>
+                                    <h4 class="card-title"><strong>Transactions</strong></h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
                                 </div>
                                 <div class="card-body table-full-width table-responsive">
