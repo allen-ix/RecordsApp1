@@ -29,11 +29,44 @@
     <?php
     require("Config/config.php");
     require("Config/db.php");
+
+    //get the value sent over search form
+    $search = $_GET['search'];
+
+    //define total number of results you want per page
+    $results_per_page = 10;
+
+    //find the total number of results/rows stored in database
+    $query = "SELECT * FROM transaction";
+    $result = mysqli_query($conn, $query);
+    $number_of_result = mysqli_num_rows($result);
+
+    //detremine the total number of pages available
+    $number_of_page = ceil($number_of_result / $results_per_page);
     
-    $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname,",", employee.firstname) as employee_fullname, transaction.remarks FROM recordsapp_db.employee, recordsapp_db.office, recordsapp_db.transaction
-    WHERE transaction.employee_id=employee.id and transaction.office_id=office.id';
+    // determine which page number visitor is currently on
+    if(!isset($_GET['page'])) {
+        $page = 1;
+    } else{
+        $page = $_GET['page'];
+    }
+
+    // determine the sqll LIMIT starting number for the results on the display page
+    $page_first_result = ($page-1) * $results_per_page;
+
+    if (strlen($search) > 0){
+        $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname,",", employee.firstname) as employee_fullname, transaction.remarks FROM records_app.employee, records_app.office, records_app.transaction
+        WHERE transaction.employee_id=employee.id and transaction.office_id=office.id and transaction.documentcode =' . $search . ' ORDER BY transaction.documentcode, transaction.datelog LIMIT '. $page_first_result . ',' . $results_per_page;
+    }else{
+        $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname,",", employee.firstname) as employee_fullname, transaction.remarks FROM records_app.employee, records_app.office, records_app.transaction
+        WHERE transaction.employee_id=employee.id and transaction.office_id=office.id ORDER BY transaction.documentcode, transaction.datelog LIMIT '. $page_first_result . ',' . $results_per_page;
+    }
+    
+
+
     $result = mysqli_query($conn, $query);
     $transactions = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
     mysqli_free_result($result);
     mysqli_close($conn);
     ?>
@@ -60,6 +93,18 @@
                 <div class="row">
                 <div class="col-md-12">
                             <div class="card strpied-tabled-with-hover">
+                            <br/>
+                                <div class="col-md-12">
+                                    <form action="/transaction.php" method="GET">
+                                        <input type="text" name="search" />
+                                        <input type="submit" value="Search" class="btn btn-info btn-fill" />
+                                    </form>
+                                </div>
+                                <div class="col-md-12">
+                                    <a href="/transaction-add.php">
+                                        <button type="submit" class="btn btn-info btn-fill pull-right">Add New Transaction</button>
+                                    </a>
+                                </div>
                                 <div class="card-header ">
                                     <h4 class="card-title">Transactions</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
@@ -90,54 +135,56 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
+                    <?php
+                        for($page=1; $page <= $number_of_page; $page++){
+                            echo '<a href = "transaction.php?page='. $page .'">' . $page .'</a>';
+                        }
+                        ?>
                 </div>
             </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <nav class="pull-left">
+                        <ul>
+                            <li>
+                                <a href="#">
+                                    Home
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                    <p class="copyright pull-right">
+                        &copy; <script>document.write(new Date().getFullYear())</script> <a href="http://www.creative-tim.com">Creative Tim</a>, made with love for a better web
+                    </p>
+                </div>
+            </footer>
+
         </div>
-
-
-        <footer class="footer">
-            <div class="container-fluid">
-                <nav class="pull-left">
-                    <ul>
-                        <li>
-                            <a href="#">
-                                Home
-                            </a>
-                        </li>
-
-                    </ul>
-                </nav>
-                <p class="copyright pull-right">
-                    &copy; <script>document.write(new Date().getFullYear())</script> <a href="http://www.creative-tim.com">Creative Tim</a>, made with love for a better web
-                </p>
-            </div>
-        </footer>
-
     </div>
-</div>
 
 
-</body>
+    </body>
 
-    <!--   Core JS Files   -->
-    <script src="assets/js/jquery.3.2.1.min.js" type="text/javascript"></script>
-	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+        <!--   Core JS Files   -->
+        <script src="assets/js/jquery.3.2.1.min.js" type="text/javascript"></script>
+        <script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
 
-	<!--  Charts Plugin -->
-	<script src="assets/js/chartist.min.js"></script>
+        <!--  Charts Plugin -->
+        <script src="assets/js/chartist.min.js"></script>
 
-    <!--  Notifications Plugin    -->
-    <script src="assets/js/bootstrap-notify.js"></script>
+        <!--  Notifications Plugin    -->
+        <script src="assets/js/bootstrap-notify.js"></script>
 
-    <!--  Google Maps Plugin    -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+        <!--  Google Maps Plugin    -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
 
-    <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
-	<script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
+        <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+        <script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
 
-	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
-	<script src="assets/js/demo.js"></script>
+        <!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
+        <script src="assets/js/demo.js"></script>
 
 
-</html>
+    </html>

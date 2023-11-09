@@ -29,10 +29,32 @@
     <?php
     require("Config/config.php");
     require("Config/db.php");
-    
-    $query = "SELECT employee.lastname, employee.firstname, employee.address, office.name as office_name FROM employee, office WHERE employee.office_id = office.id";
+
+    //define total number of results you want per page
+    $results_per_page = 10;
+
+    //find the total number of results/rows stored in database
+    $query = "SELECT * FROM employee";
     $result = mysqli_query($conn, $query);
-    $offices = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $number_of_result = mysqli_num_rows($result);
+
+    //detremine the total number of pages available
+    $number_of_page = ceil($number_of_result / $results_per_page);
+    
+    // determine which page number visitor is currently on
+    if(!isset($_GET['page'])) {
+        $page = 1;
+    } else{
+        $page = $_GET['page'];
+    }
+
+    // determine the sqll LIMIT starting number for the results on the display page
+    $page_first_result = ($page-1) * $results_per_page;
+    
+    $query = 'SELECT employee.id, employee.lastname, employee.firstname, employee.address, office.name as office_name FROM employee, office WHERE employee.office_id = office.id ORDER BY employee.lastname LIMIT '. $page_first_result . ',' . $results_per_page;
+    $result = mysqli_query($conn, $query);
+
+    $employees = mysqli_fetch_all($result, MYSQLI_ASSOC);
     mysqli_free_result($result);
     mysqli_close($conn);
     ?>
@@ -64,7 +86,7 @@
                                     <a href="/employee-add.php">
                                         <button type="submit" class="btn btn-info btn-fill pull-right">Add New Employee</button>
                                     </a>
-                                </div>    
+                                </div>
                             <div class="card-header ">
                                     <h4 class="card-title">Employees</h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
@@ -76,14 +98,20 @@
                                             <th>First name</th>
                                             <th>Address</th>
                                             <th>Office</th>
+                                            <th>Action</th>
                                         </thead>
                                         <tbody>
-                                            <?php foreach($offices as $office) : ?>
+                                            <?php foreach($employees  as $employee) : ?>
                                             <tr>
-                                                <td><?php echo $office['lastname']; ?></td>
-                                                <td><?php echo $office['firstname']; ?></td>
-                                                <td><?php echo $office['address']; ?></td>
-                                                <td><?php echo $office['office_name']; ?></td>
+                                                <td><?php echo $employee['lastname']; ?></td>
+                                                <td><?php echo $employee['firstname']; ?></td>
+                                                <td><?php echo $employee['address']; ?></td>
+                                                <td><?php echo $employee['office_name']; ?></td>
+                                                <td>
+                                                    <a href="/employee-edit.php?id=<?php echo $employee['id']; ?>">
+                                                        <button type="submit" class="btn btn-warning btn-fill pull-right">Edit</button>
+                                                    </a>
+                                                </td>
                                             </tr>
                                             <?php endforeach ?>
                                         </tbody>
@@ -91,54 +119,58 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
+                    <?php
+                        for($page=1; $page <= $number_of_page; $page++){
+                            echo '<a href = "employee.php?page='. $page .'">' . $page .'</a>';
+                        }
+                    ?>
                 </div>
             </div>
+
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <nav class="pull-left">
+                        <ul>
+                            <li>
+                                <a href="#">
+                                    Home
+                                </a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                    <p class="copyright pull-right">
+                        &copy; <script>document.write(new Date().getFullYear())</script> <a href="http://www.creative-tim.com">Creative Tim</a>, made with love for a better web
+                    </p>
+                </div>
+            </footer>
+
         </div>
-
-
-        <footer class="footer">
-            <div class="container-fluid">
-                <nav class="pull-left">
-                    <ul>
-                        <li>
-                            <a href="#">
-                                Home
-                            </a>
-                        </li>
-
-                    </ul>
-                </nav>
-                <p class="copyright pull-right">
-                    &copy; <script>document.write(new Date().getFullYear())</script> <a href="http://www.creative-tim.com">Creative Tim</a>, made with love for a better web
-                </p>
-            </div>
-        </footer>
-
     </div>
-</div>
 
 
-</body>
+    </body>
 
-    <!--   Core JS Files   -->
-    <script src="assets/js/jquery.3.2.1.min.js" type="text/javascript"></script>
-	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+        <!--   Core JS Files   -->
+        <script src="assets/js/jquery.3.2.1.min.js" type="text/javascript"></script>
+        <script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
 
-	<!--  Charts Plugin -->
-	<script src="assets/js/chartist.min.js"></script>
+        <!--  Charts Plugin -->
+        <script src="assets/js/chartist.min.js"></script>
 
-    <!--  Notifications Plugin    -->
-    <script src="assets/js/bootstrap-notify.js"></script>
+        <!--  Notifications Plugin    -->
+        <script src="assets/js/bootstrap-notify.js"></script>
 
-    <!--  Google Maps Plugin    -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+        <!--  Google Maps Plugin    -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
 
-    <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
-	<script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
+        <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+        <script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
 
-	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
-	<script src="assets/js/demo.js"></script>
+        <!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
+        <script src="assets/js/demo.js"></script>
 
 
-</html>
+    </html>
