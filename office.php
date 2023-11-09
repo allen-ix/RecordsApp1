@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
+<style>
+    .table {
+        -webkit-text-fill-color: black;
+    }
+    .card-header {
+        -webkit-text-fill-color: indigo;
+    }
+</style>
 	<meta charset="utf-8" />
 	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -59,7 +67,7 @@
     ?>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-5.jpg">
+    <div class="sidebar" data-color="azure" data-image="assets/img/sidebar-5.jpg">
 
     <!--
 
@@ -87,7 +95,7 @@
                                     </a>
                                 </div>
                                 <div class="card-header ">
-                                    <h4 class="card-title">Offices</h4>
+                                    <h4 class="card-title"><strong>Offices</strong></h4>
                                     <p class="card-category">Here is a subtitle for this table</p>
                                 </div>
                                 <div class="card-body table-full-width table-responsive">
@@ -114,7 +122,7 @@
                                                 <td><?php echo $office['postal']; ?></td>
                                                 <td>
                                                     <a href="/office-edit.php?id=<?php echo $office['id']; ?>">
-                                                        <button type="submit" class="btn btn-warning btn-fill pull-right">Edit</button>
+                                                        <button type="submit" class="btn btn-info btn-fill pull-right">Edit</button>
                                                     </a>
                                                 </td>
                                             </tr>
