@@ -26,50 +26,45 @@
 
 </head>
 <body>
-    <?php 
-    require('config/config.php');
-    require('config/db.php');
+<?php 
+    require("Config/config.php");
+    require("Config/db.php");
 
-    //get value sent over
+    // get value sent over
     $id = $_GET['id'];
 
-    //create query
+    // create query
     $query = "SELECT * FROM office WHERE id=" . $id;
 
-    //get result of query
+    // get result of query
     $result = mysqli_query($conn, $query);
-    $conv =mysqli_fetch_all($result);
-    if(count($conv) == 1){
-        //fetch data
+
+    // check if there are results
+    if ($result) {
         $office = mysqli_fetch_array($result);
-        $name = $office['name'];
-        $contactnum = $office['contactnum'];
-        $email = $office['email'];
-        $address = $office['address'];
-        $city = $office['city'];
-        $country = $office['country'];
-        $postal = $office['postal'];
-    } 
-    
-    //free result
-    mysqli_free_result($result);
-    //close connection
-    mysqli_close($conn);
-    ?>
 
-    <div class="wrapper">
-        <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-5.jpg">
+        // check if $office is not null before accessing its values
+        if ($office) {
+            $name = $office['name'];
+            $contactnum = $office['contactnum'];
+            $email = $office['email'];
+            $address = $office['address'];
+            $city = $office['city'];
+            $country = $office['country'];
+            $postal = $office['postal'];
+        } else {
+        
+            echo "No office found with ID: " . $id;
+            exit;
+        }
 
-        <div class="sidebar-wrapper">
-        <?php include("BS3/sidebar.php"); ?>
-        </div>
-        </div>
-
-        <div class="main-panel">
-        <?php include("BS3/navbar.php"); ?>
-<?php 
-    require("config/config.php");
-    require("config/db.php");
+        // free result
+        mysqli_free_result($result);
+    } else {
+        // Handle the case where the query fails
+        echo "Error executing query: " . mysqli_error($conn);
+        exit;
+    }
 
     if(isset($_POST["submit"])){
         $name = mysqli_real_escape_string($conn, $_POST["name"]);
@@ -90,7 +85,25 @@
             echo "ERROR: ".mysqli_error($conn);
         }
     }
-?>    
+
+    // close connection
+    mysqli_close($conn);
+?>
+   
+
+    <div class="wrapper">
+        <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-5.jpg">
+
+        <div class="sidebar-wrapper">
+        <?php include("BS3/sidebar.php"); ?>
+        </div>
+        </div>
+
+        <div class="main-panel">
+        <?php include("BS3/navbar.php"); ?>
+
+
+
         <div class="content">
             <div class="container-fluid">
                 <div class="row">

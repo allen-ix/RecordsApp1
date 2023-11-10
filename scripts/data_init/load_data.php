@@ -14,7 +14,7 @@ function FakeSentence($faker, $wordCount = 6, $separator = ' ')
 $host = 'localhost';
 $database = 'recordsapp_db';
 $username = 'root';
-$password = 'sera';
+$password = 'allen';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$database", $username, $password);

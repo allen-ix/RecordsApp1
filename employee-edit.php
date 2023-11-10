@@ -1,158 +1,136 @@
-<!doctype html>
-<html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-
-	<title>Light Bootstrap Dashboard by Creative Tim</title>
-
-	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
-
-
-    <!-- Bootstrap core CSS     -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- Animation library for notifications   -->
-    <link href="assets/css/animate.min.css" rel="stylesheet"/>
-    <!--  Light Bootstrap Table core CSS    -->
-    <link href="assets/css/light-bootstrap-dashboard.css?v=1.4.0" rel="stylesheet"/>
-
-    <!--     Fonts and icons     -->
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
-    <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
-
-</head>
-<body>
-
 <?php
-    require("Config/config.php");
-    require("Config/db.php");
+require("Config/config.php");
+require("Config/db.php");
 
-    //get value sent over
-    $id = $_GET['id'];
+// Initialize variables
+$lastname = $firstname = $office_id = $address = "";
 
-    //create query
-    $query = "SELECT * FROM employee WHERE id=" . $id;
-    //get result of query
-    $result = mysqli_query($conn, $query);
-    $conv =mysqli_fetch_all($result);
-    if(count($conv) == 1){
-        //fetch data
-        $employee = mysqli_fetch_array($result);
+//get value sent over
+$id = $_GET['id'];
+
+//create query
+$query = "SELECT * FROM employee WHERE id=" . $id;
+
+//get result of query
+$result = mysqli_query($conn, $query);
+$conv = mysqli_fetch_all($result);
+
+// Check if data is fetched successfully
+if (count($conv) == 1) {
+    //fetch data
+    $employee = mysqli_fetch_array($result);
+
+    if ($employee) {
         $lastname = $employee["lastname"];
         $firstname = $employee["firstname"];
         $office_id = $employee["office_id"];
         $address = $employee["address"];
+    } else {
+        echo " ";
     }
+}
 
-    // free result
-    mysqli_free_result($result);
+// free result
+mysqli_free_result($result);
 
-    //close connection
-    mysqli_close($conn);
+if (isset($_POST["submit"])) {
+    $lastname = mysqli_real_escape_string($conn, $_POST["lastname"]);
+    $firstname = mysqli_real_escape_string($conn, $_POST["firstname"]);
+    $office_id = mysqli_real_escape_string($conn, $_POST["office"]);
+    $address = mysqli_real_escape_string($conn, $_POST["address"]);
+
+    $query = "UPDATE employee SET lastname='$lastname', firstname='$firstname', office_id='$office_id', address='$address'
+    WHERE id=" . $id;
+
+    if (mysqli_query($conn, $query)) {
+        
+    } else {
+        echo "ERROR: " . mysqli_error($conn);
+        echo $query;
+    }
+}
+
+//close connection
+mysqli_close($conn);
 ?>
 
-    <div class="wrapper">
-        <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-5.jpg">
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- your head content here... -->
 
-        <div class="sidebar-wrapper">
-        <?php include("BS3/sidebar.php"); ?>
-        </div>
-        </div>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
 
-        <div class="main-panel">
-        <?php include("BS3/navbar.php"); ?>
-<?php 
-    require("config/config.php");
-    require("config/db.php");
+    <!-- your other stylesheets... -->
+</head>
+<body>
 
-    if(isset($_POST["submit"])){
-        $lastname = mysqli_real_escape_string($conn, $_POST["lastname"]);
-        $firstname = mysqli_real_escape_string($conn, $_POST["firstname"]);
-        $office_id = mysqli_real_escape_string($conn, $_POST["office"]);
-        $address = mysqli_real_escape_string($conn, $_POST["address"]);
-       
-        $query = "UPDATE employee SET lastname='$lastname', firstname='$firstname', office_id='$office_id', address='$address'
-        WHERE id=" . $id;
-        
+<div class="wrapper">
+    <!-- your wrapper content... -->
 
-        if(mysqli_query($conn, $query)){
-            
-        }else{
-            echo "ERROR: ".mysqli_error($conn);
-            echo $query;
-        }
-    }
-?>    
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">Edit Profile</h4>
-                            </div>
-                            <div class="content">
-                                <form method="POST" action="<?php $_SERVER['PHP_SELF']; ?>">
-                                    <div class="row">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Edit Profile</h4>
+                        </div>
+                        <div class="content">
+                            <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                                <div class="row">
                                     <div class="col-md-4 pr-1">
-                                            <div class="form-group">
-                                                <label>Last Name</label>
-                                                <input name="lastname" type="text" class="form-control" value="<?php echo $lastname;?> ">
-                                            </div>
-                                    </div>
-                                    <div class="col-md-4 px-1">
-                                            <div class="form-group">
-                                                <label>First Name</label>
-                                                <input name="firstname" type="text" class="form-control" value="<?php echo $firstname;?> ">
-                                            </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4 px-1">
-                                            <div class="form-group">
-                                                <label for="exampleInputEmail">Office</label>
-                                                <select class="form-control" name="office">
-                                                    <option>Select....</option>
-                                                    <?php
-                                                        $query = "SELECT id, name FROM office";
-                                                        $result = mysqli_query($conn,$query);
-                                                        while ($row=mysqli_fetch_array($result)) {
-                                                            if ($row['id'] == $office_id){
-                                                                echo "<option value=" . $row['id'] . "selected>" . $row['name'] . "</option>";
-                                                            }else{
-                                                                echo "<option value=" . $row['id'] . ">" . $row['name'] . "</option>";
-                                                            }
-                                                            
-                                                        }
-                                                    ?>
-                                                </select>
-                                            </div>
+                                        <div class="form-group">
+                                            <label>Last Name</label>
+                                            <input name="lastname" type="text" class="form-control" value="<?php echo $lastname;?>">
                                         </div>
+                                    </div>
+                                    <div class="col-md-4 px-1">
+                                        <div class="form-group">
+                                            <label>First Name</label>
+                                            <input name="firstname" type="text" class="form-control" value="<?php echo $firstname;?>">
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-4 px-1">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail">Office</label>
+                                            <select class="form-control" name="office">
+                                                <option>Select....</option>
+                                                <?php
+                                                $query = "SELECT id, name FROM office";
+                                                $result = mysqli_query($conn, $query);
+                                                while ($row = mysqli_fetch_array($result)) {
+                                                    if ($row['id'] == $office_id) {
+                                                        echo "<option value=" . $row['id'] . " selected>" . $row['name'] . "</option>";
+                                                    } else {
+                                                        echo "<option value=" . $row['id'] . ">" . $row['name'] . "</option>";
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label>Address / Building</label>
-                                                    <input name="address" type="text" class="form-control" value="<?php echo $address;?> ">
-                                                </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Address / Building</label>
+                                            <input name="address" type="text" class="form-control" value="<?php echo $address;?>">
                                         </div>
-                                        </div>
-                                    <button type="submit" name="submit" value="Submit" class="btn btn-info btn-fill pull-right">Save</button>
-                                    <div class="clearfix"></div>
-                                </form>
-                            </div>
+                                    </div>
+                                </div>
+                                <button type="submit" name="submit" value="Submit" class="btn btn-info btn-fill pull-right">Save</button>
+                                <div class="clearfix"></div>
+                            </form>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
+    </div>
 
 
         <footer class="footer">

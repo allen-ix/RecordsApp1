@@ -32,50 +32,81 @@
 
 </head>
 <body>
-    <?php
-    require("Config/config.php");
-    require("Config/db.php");
+<?php
+require("Config/config.php");
+require("Config/db.php");
 
-    //get the value sent over search form
-    $search = $_GET['search'];
+// get the value sent over the search form
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 
-    //define total number of results you want per page
-    $results_per_page = 10;
+// define the total number of results you want per page
+$results_per_page = 10;
 
-    //find the total number of results/rows stored in database
-    $query = "SELECT * FROM transaction";
-    $result = mysqli_query($conn, $query);
-    $number_of_result = mysqli_num_rows($result);
+// find the total number of results/rows stored in the database
+$query = "SELECT * FROM transaction";
+$result = mysqli_query($conn, $query);
+$number_of_result = mysqli_num_rows($result);
 
-    //detremine the total number of pages available
-    $number_of_page = ceil($number_of_result / $results_per_page);
-    
-    // determine which page number visitor is currently on
-    if(!isset($_GET['page'])) {
-        $page = 1;
-    } else{
-        $page = $_GET['page'];
-    }
+// determine the total number of pages available
+$number_of_page = ceil($number_of_result / $results_per_page);
 
-    // determine the sqll LIMIT starting number for the results on the display page
-    $page_first_result = ($page-1) * $results_per_page;
+// determine which page number visitor is currently on
+if (!isset($_GET['page'])) {
+    $page = 1;
+} else {
+    $page = $_GET['page'];
+}
 
-    if (strlen($search) > 0){
-        $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname,",", employee.firstname) as employee_fullname, transaction.remarks FROM records_app.employee, records_app.office, records_app.transaction
-        WHERE transaction.employee_id=employee.id and transaction.office_id=office.id and transaction.documentcode =' . $search . ' ORDER BY transaction.documentcode, transaction.datelog LIMIT '. $page_first_result . ',' . $results_per_page;
-    }else{
-        $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname,",", employee.firstname) as employee_fullname, transaction.remarks FROM records_app.employee, records_app.office, records_app.transaction
-        WHERE transaction.employee_id=employee.id and transaction.office_id=office.id ORDER BY transaction.documentcode, transaction.datelog LIMIT '. $page_first_result . ',' . $results_per_page;
-    }
-    
+// determine the SQL LIMIT starting number for the results on the display page
+$page_first_result = ($page - 1) * $results_per_page;
 
+if (strlen($search) > 0) {
+    // Use prepared statement to prevent SQL injection
+    $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname,",", employee.firstname) as employee_fullname, transaction.remarks FROM recordsapp_db.employee, recordsapp_db.office, recordsapp_db.transaction
+        WHERE transaction.employee_id=employee.id and transaction.office_id=office.id and transaction.documentcode = ? ORDER BY transaction.documentcode, transaction.datelog LIMIT ?, ?';
 
-    $result = mysqli_query($conn, $query);
+    // Prepare the statement
+    $stmt = mysqli_prepare($conn, $query);
+
+    // Bind the parameters
+    mysqli_stmt_bind_param($stmt, 'sii', $search, $page_first_result, $results_per_page);
+
+    // Execute the statement
+    mysqli_stmt_execute($stmt);
+
+    // Get the result set
+    $result = mysqli_stmt_get_result($stmt);
+
+    // Fetch the data
     $transactions = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    mysqli_free_result($result);
-    mysqli_close($conn);
-    ?>
+    // Close the statement
+    mysqli_stmt_close($stmt);
+} else {
+    $query = 'SELECT transaction.datelog, transaction.documentcode, transaction.action, office.name as office_name, CONCAT(employee.lastname,",", employee.firstname) as employee_fullname, transaction.remarks FROM recordsapp_db.employee, recordsapp_db.office, recordsapp_db.transaction
+        WHERE transaction.employee_id=employee.id and transaction.office_id=office.id ORDER BY transaction.documentcode, transaction.datelog LIMIT ?, ?';
+
+    // Prepare the statement
+    $stmt = mysqli_prepare($conn, $query);
+
+    // Bind the parameters
+    mysqli_stmt_bind_param($stmt, 'ii', $page_first_result, $results_per_page);
+
+    // Execute the statement
+    mysqli_stmt_execute($stmt);
+
+    // Get the result set
+    $result = mysqli_stmt_get_result($stmt);
+
+    // Fetch the data
+    $transactions = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    // Close the statement
+    mysqli_stmt_close($stmt);
+}
+
+mysqli_close($conn);
+?>
 
 <div class="wrapper">
     <div class="sidebar" data-color="red" data-image="assets/img/sidebar-5.jpg">

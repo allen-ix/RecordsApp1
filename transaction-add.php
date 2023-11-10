@@ -87,7 +87,7 @@
                                     <div class="col-md-3 px-1">
                                             <div class="form-group">
                                                 <label>Action</label>
-                                                <select class="form-control" input name="firstname">
+                                                <select class="form-control" input name="action">
                                                     <option>IN</option>
                                                     <option>OUT</option>
                                                     <option>COMPLETE</option>
@@ -110,7 +110,7 @@
                                                 <select class="form-control" name='employee_id'>
                                                 <option>Select.....</option>
                                                 <?php
-                                                     $query = "SELECT id, CONCAT(lastname,', ',firstname) as Employee from records_app.employee";
+                                                     $query = "SELECT id, CONCAT(lastname,', ',firstname) as Employee from recordsapp_db.employee";
                                                      $result = mysqli_query($conn, $query);
                                                      while ($row = mysqli_fetch_array($result)) {
                                                         echo "<option value=" . $row['id'] . ">" . $row['Employee'] . "</option>";
@@ -126,7 +126,7 @@
                                                 <select class="form-control" name='office_id'>
                                                 <option>Select.....</option>
                                                 <?php
-                                                     $query = "SELECT id, name FROM records_app.office";
+                                                     $query = "SELECT id, name FROM recordsapp_db.office";
                                                      $result = mysqli_query($conn, $query);
                                                      while ($row = mysqli_fetch_array($result)) {
                                                         echo "<option value=" . $row['id'] . ">" . $row['name'] . "</option>";
