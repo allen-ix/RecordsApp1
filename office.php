@@ -111,7 +111,7 @@
                                             <th>Action</th>
                                         </thead>
                                         <tbody>
-                                            <?php foreach($offices as $office) : ?>
+                                        <?php foreach ($offices as $office) : ?>
                                             <tr>
                                                 <td><?php echo $office['name']; ?></td>
                                                 <td><?php echo $office['contactnum']; ?></td>
@@ -124,9 +124,21 @@
                                                     <a href="/office-edit.php?id=<?php echo $office['id']; ?>">
                                                         <button type="submit" class="btn btn-info btn-fill pull-right">Edit</button>
                                                     </a>
+                                                    <button type="button" class="btn btn-danger btn-fill pull-right" onclick="confirmDelete(<?php echo $office['id']; ?>)">Delete</button>
                                                 </td>
                                             </tr>
-                                            <?php endforeach ?>
+                                        <?php endforeach ?>
+
+                                        <script>
+                                            function confirmDelete(officeId) {
+                                                var confirmation = confirm("Are you sure you want to delete this office?");
+                                                if (confirmation) {
+                                                    // Redirect to office-delete.php with the office ID
+                                                    window.location.href = "/office-delete.php?id=" + officeId;
+                                                }
+                                            }
+                                        </script>
+
                                         </tbody>
                                     </table>
                                 </div>

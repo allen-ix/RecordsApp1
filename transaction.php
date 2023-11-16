@@ -155,9 +155,10 @@ mysqli_close($conn);
                                             <th>Office</th>
                                             <th>Employee</th>
                                             <th>Remarks</th>
+                                            <th>Del</th>
                                         </thead>
                                         <tbody>
-                                            <?php foreach($transactions as $transaction) : ?>
+                                        <?php foreach ($transactions as $transaction) : ?>
                                             <tr>
                                                 <td><?php echo $transaction['datelog']; ?></td>
                                                 <td><?php echo $transaction['documentcode']; ?></td>
@@ -165,8 +166,22 @@ mysqli_close($conn);
                                                 <td><?php echo $transaction['office_name']; ?></td>
                                                 <td><?php echo $transaction['employee_fullname']; ?></td>
                                                 <td><?php echo $transaction['remarks']; ?></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger btn-fill pull-right">Delete</button>
+                                                </td>
                                             </tr>
-                                            <?php endforeach ?>
+                                        <?php endforeach ?>
+
+                                        <script>
+                                            function confirmDelete(transactionId) {
+                                                var confirmation = confirm("Are you sure you want to delete this transaction?");
+                                                if (confirmation) {
+                                                    // Redirect to a delete script with the transaction ID
+                                                    window.location.href = 'transaction-delete.php?id=' + transactionId;
+                                                }
+                                            }
+                                        </script>
+
                                         </tbody>
                                     </table>
                                 </div>

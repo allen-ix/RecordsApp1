@@ -116,9 +116,20 @@
                                                     <a href="/employee-edit.php?id=<?php echo $employee['id']; ?>">
                                                         <button type="submit" class="btn btn-success btn-fill pull-right">Edit</button>
                                                     </a>
+                                                    <button type="button" class="btn btn-danger btn-fill pull-right" onclick="confirmDelete(<?php echo $employee['id']; ?>)">Delete</button>
                                                 </td>
                                             </tr>
-                                            <?php endforeach ?>
+                                        <?php endforeach ?>
+
+                                        <script>
+                                            function confirmDelete(employeeId) {
+                                                var confirmation = confirm("Are you sure you want to delete this employee?");
+                                                if (confirmation) {
+                                                    // Redirect to office-delete.php with the office ID
+                                                    window.location.href = "/employee-delete.php?id=" + employeeId;
+                                                }
+                                            }
+                                        </script>
                                         </tbody>
                                     </table>
                                 </div>
